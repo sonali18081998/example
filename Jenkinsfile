@@ -1,32 +1,27 @@
 pipeline {
-    agent any
+	
+	agent any
 
-    stages {
-        stage ('Compile Stage') {
+	stages {
 
-            steps {
-                withMaven(maven : 'maven_3_5_0') {
-                    sh 'mvn clean compile'
-                }
-            }
-        }
+		stage ('Clean') {
+			steps {
+				sh "git clean -fdx"
+			}
+		}
 
-        stage ('Testing Stage') {
+		stage('Build Server') {
 
-            steps {
-                withMaven(maven : 'maven_3_5_0') {
-                    sh 'mvn test'
-                }
-            }
-        }
+			steps {
+				sh "cd server && cmake . && make"
+			}
+		}
 
+		stage('Build Client') {
 
-        stage ('Deployment Stage') {
-            steps {
-                withMaven(maven : 'maven_3_5_0') {
-                    sh 'mvn deploy'
-                }
-            }
-        }
-    }
+			steps {
+				sh "cd client && cmake . && make"
+			}
+		}
+	}
 }
